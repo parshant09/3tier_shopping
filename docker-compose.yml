@@ -1,0 +1,34 @@
+version: "3.0"
+services:
+  frontend:
+    container_name: front
+    build: ./frontend
+    env_file:
+      - ./frontend/.env
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
+
+  backend:
+    container_name: back
+    build: .
+    env_file:
+      - ./backend/.env
+    environment:
+      # NOTE: the '@' in the password 'admin@123' is encoded as '%40'
+      MONGO_URI: 'mongodb://admin:admin%40123@mongodb:27017/huxnStore?authSource=admin'
+    ports:
+      - "5000:5000"
+    depends_on:
+      - mongodb
+
+  mongodb:
+    image: mongo:7.0
+    container_name: mongodb
+    ports:
+      - "27017:27017"
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: admin
+      MONGO_INITDB_ROOT_PASSWORD: admin@123
+
