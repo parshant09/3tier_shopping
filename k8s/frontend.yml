@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: front-dep
+  labels:
+    app: front
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: front
+  template:
+    metadata:
+      labels:
+        app: front
+    spec:
+      containers:
+        - name: front-con
+          image: docker.io/parshant09/new-l-frontend:latest
+          env:
+            - name: VITE_BACKEND_URL
+              value: "http://back-ser:5000"
+          ports:
+            - containerPort: 5173
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: front-ser
+spec:
+  selector:
+    app: front
+  type: NodePort
+  ports:
+    - protocol: TCP
+      port: 5173
+      targetPort: 5173
+      nodePort: 31789
